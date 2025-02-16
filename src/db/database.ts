@@ -8,7 +8,7 @@ const ASTRA_TOKEN = process.env.ASTRA_TOKEN;
 const ASTRA_ENDPOINT = process.env.ASTRA_ENDPOINT;
 const KEY_SPACE = process.env.KEY_SPACE;
 
-const needed_collections: string[] = ["subscriptions"]; // Required collections
+const needed_collections: string[] = ["subscriptions", "quiz_submissions"]; // Required collections
 
 // Validate keyspace format
 const validateKeyspace = (keyspace: string | undefined): boolean => {

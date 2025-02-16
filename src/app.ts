@@ -10,6 +10,7 @@ import logger from "./logger/logger";
 import { db, testDBConnection } from "./db/database";
 import subscriptionRouter from "./routes/subscribe.routes";
 import { limiter } from "./middleware/limiter.middleware";
+import quizRouter from "./routes/quiz.routes";
 
 dotenv.config();
 
@@ -79,6 +80,7 @@ app.get("/api", (req, res) => {
 });
 
 app.use("/api/subscription", subscriptionRouter);
+app.use("/api/quiz", quizRouter);
 
 app.use(limiter);
 
