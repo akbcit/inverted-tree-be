@@ -1,0 +1,48 @@
+service: inverted-tree-api
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  memorySize: 512
+  timeout: 15
+  environment:
+    ASTRA_ENDPOINT: ${env:ASTRA_ENDPOINT}
+    ASTRA_TOKEN: ${env:ASTRA_TOKEN}
+    PORT: 2800
+    KEY_SPACE: inverted_tree
+    NODE_ENV: ${env:NODE_ENV}
+    FRONTEND_URL_PROD: ${env:FRONTEND_URL_PROD}
+    FRONTEND_URL_DEV: ${env:FRONTEND_URL_DEV}
+
+functions:
+  app:
+    handler: dist/lambda.handler # Updated to point to compiled JS
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors: true # Added CORS support
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: true # Added CORS support
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+package:
+  patterns:
+    - "!node_modules/**" 
+    - "!src/**"
+    - "!tests/**"
+    - "!docs/**"
+    - "!README.md"
+    - "!tsconfig.json"
+    - "!package-lock.json"
+    - "!serverless.yml"
+    - "!.git/**"
+    - "!local.env"
+    - "dist/**"
+  excludeDevDependencies: true

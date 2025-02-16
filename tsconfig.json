@@ -1,0 +1,49 @@
+{
+  "compilerOptions": {
+    // ✅ Ensures compatibility with AWS Lambda (CommonJS + ES modules)
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+
+    // ✅ Ensures strict type checking for better reliability
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    "alwaysStrict": true,
+
+    // ✅ Allows JSON imports & default imports
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    // ✅ Enables debugging and better error reporting
+    "sourceMap": true,
+    "removeComments": false,
+    "declaration": true,
+
+    // ✅ Fixes alias import issues (e.g., `@/utils/apiResponse.utils`)
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"]
+    },
+
+    // ✅ Output compiled JS into `dist/`
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // ✅ Skips unnecessary checks for faster builds
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // ✅ Prevents compilation if there are errors
+    "noEmitOnError": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"],
+  "typeRoots": ["./src/types", "./node_modules/@types"]
+}
