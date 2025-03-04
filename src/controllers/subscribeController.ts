@@ -10,11 +10,15 @@ export class SubscriptionController {
 
         try {
 
-            const { email } = req.body;
+            const { email, name } = req.body;
 
             // Check if email exists
             if (!email) {
                 return sendError(res, "Email is required to subscribe", 400);
+            }
+
+            if (!name) {
+                return sendError(res, "Name is required to subscribe", 400);
             }
 
             const userLocation: UserLocation | undefined = req.userLocation;
@@ -37,13 +41,13 @@ export class SubscriptionController {
             }
 
             // Save the subscription
-            await collection.insertOne({ email, subscribedAt: new Date(), userLocation });
+            await collection.insertOne({ email, name, subscribedAt: new Date(), userLocation });
 
             logger.info(`New subscription: ${email}`);
             return sendSuccess(res, "Subscription successful!",);
         } catch (error) {
             logger.error("Subscription error:", error);
-            console.error("Full Error:", error);  
+            console.error("Full Error:", error);
             return sendError(res, "Internal server error", 500);
         }
     };

@@ -1,12 +1,21 @@
 import { sendError, sendSuccess } from "@/utils/apiResponse.utils";
 import { RequestHandler } from "express";
-import { db } from "@/db/database"; // AstraDB client
+import { QuizService } from "@/services/quiz.svc";
+
 import logger from "@/logger/logger";
 
 export class QuizSubmissionController {
 
-    public static submitQuiz: RequestHandler = async (req, res, next) => {
+    private quizService: QuizService;
+
+    constructor() {
+        this.quizService = new QuizService();
+    }
+
+    public submitQuiz: RequestHandler = async (req, res, next) => {
+
         try {
+
             const { email, quizId, answers } = req.body;
 
             // ✅ Convert answers object to a JSON string for proper logging
@@ -23,24 +32,28 @@ export class QuizSubmissionController {
                 return sendError(res, "Invalid email format", 400);
             }
 
-            const collection = db.collection("quiz_submissions");
+            // check if quiz Id is number
+            if (isNaN(Number(quizId))) {
+                return sendError(res, "Invalid Quiz ID", 400);
+            }
 
             // Check if the user has already submitted this quiz
-            const existingSubmission = await collection.findOne({ email, quizId });
-            if (existingSubmission) {
+            const isExistingSubmission = await this.quizService.isQuizSubmittedForUser(email, Number(quizId));
+
+            if (isExistingSubmission) {
                 return sendError(res, "User has already submitted this quiz", 409);
             }
 
-            // ✅ Convert answers to a valid JSON format before saving in AstraDB
-            await collection.insertOne({
-                email,
-                quizId,
-                answers: JSON.stringify(answers), // Storing answers as a JSON string
-                submittedAt: new Date(),
-            });
+            const saveToDBResult = await this.quizService.saveQuizToDB(email, Number(quizId), JSON.stringify(answers));
 
-            logger.info(`Successfully stored quiz submission for: ${email} - Quiz ID: ${quizId}`);
-            return sendSuccess(res, "Quiz submission stored successfully!");
+            if (saveToDBResult) {
+                logger.info(`Successfully stored quiz submission for: ${email} - Quiz ID: ${quizId}`);
+                return sendSuccess(res, "Quiz submission stored successfully!");
+            }
+            else {
+                return sendError(res, "Internal server error", 500);
+            }
+
         } catch (error) {
             logger.error("Quiz submission error:", error);
             console.error("Full Error:", error);

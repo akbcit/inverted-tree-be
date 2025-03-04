@@ -5,9 +5,9 @@ import logger from "@/logger/logger";
 
 export class UserRepository {
 
-    static async createUser(email: string, userLocation: UserLocation): Promise<User> {
+    static async createUser(email: string, name: string, userLocation: UserLocation): Promise<User> {
         try {
-            const user = new User(email, userLocation);
+            const user = new User(email, name, userLocation);
             await this.saveUser(user); // Save user in DB
             return user;
         } catch (error) {
@@ -43,7 +43,7 @@ export class UserRepository {
                 return null;
             }
 
-            return new User(result.email, JSON.parse(result.location));
+            return new User(result.email, result.name, JSON.parse(result.location));
 
         } catch (error) {
             logger.error("Error fetching user:", error);
