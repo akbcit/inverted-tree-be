@@ -280,9 +280,6 @@ const emailTemplateSource = `<!DOCTYPE html>
                                 <td align="center" style="padding: 0 10px;">
                                     <a href="https://www.instagram.com/invertedtreeyoga" class="social-button">Instagram</a>
                                 </td>
-                                <td align="center" style="padding: 0 10px;">
-                                    <a href="https://twitter.com/invertedtree" class="social-button">X (Twitter)</a>
-                                </td>
                             </tr>
                         </table>
                     </td>
