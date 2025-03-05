@@ -3,6 +3,7 @@ import { RequestHandler } from "express";
 import { QuizService } from "@/services/quiz.svc";
 
 import logger from "@/logger/logger";
+import { sendResultEmail } from "@/services/email.svc";
 
 export class QuizSubmissionController {
 
@@ -18,7 +19,6 @@ export class QuizSubmissionController {
 
             const { email, quizId, answers } = req.body;
 
-            // ✅ Convert answers object to a JSON string for proper logging
             logger.info(`New quiz submission: ${email} for Quiz ID: ${quizId} and answers: ${JSON.stringify(answers)}`);
 
             // Validate required fields
@@ -44,7 +44,19 @@ export class QuizSubmissionController {
                 return sendError(res, "User has already submitted this quiz", 409);
             }
 
-            const saveToDBResult = await this.quizService.saveQuizToDB(email, Number(quizId), JSON.stringify(answers));
+            const quizResult = this.quizService.calculateQuizResult(quizId, JSON.stringify(answers));
+
+            if (!quizResult) {
+                return sendError(res, "Internal server error", 500);
+            }
+
+            const sendEmailResult = await sendResultEmail(quizResult, email);
+
+            if (!sendEmailResult) {
+                return sendError(res, "Internal server error", 500);
+            }
+
+            const saveToDBResult = await this.quizService.saveQuizToDB(email, Number(quizId), JSON.stringify(answers), quizResult, true);
 
             if (saveToDBResult) {
                 logger.info(`Successfully stored quiz submission for: ${email} - Quiz ID: ${quizId}`);

@@ -15,11 +15,6 @@ export class QuizAnswers {
         return new QuizAnswers(data);
     }
 
-    // Get answer for a specific question
-    getAnswer(questionNumber: number): number | undefined {
-        return this[questionNumber];
-    }
-
     // Convert back to JSON string
     toJSON(): string {
         return JSON.stringify(this);
